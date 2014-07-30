@@ -1,6 +1,9 @@
 package me.naftoreiclag.paintingthing;
 
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.event.ComponentEvent;
 import java.awt.event.ComponentListener;
 import java.awt.event.KeyEvent;
@@ -21,6 +24,21 @@ public class MainPanel extends JPanel implements MouseMotionListener, KeyListene
 	
 	public static int width = 500;
 	public static int height = 500;
+	
+	public static int mouseX = 0;
+	public static int mouseY = 0;
+	
+	public static boolean leftDown = false;
+	public static boolean middleDown = false;
+	public static boolean rightDown = false;
+	
+	public static boolean leftPress = false;
+	public static boolean upPress = false;
+	public static boolean rightPress = false;
+	public static boolean downPress = false;
+	public static boolean shiftPress = false;
+	
+	public static int scrollDistance = 0;
 	
 	public static class MainFrame extends JFrame
 	{
@@ -45,28 +63,137 @@ public class MainPanel extends JPanel implements MouseMotionListener, KeyListene
 		this.addMouseListener(this);
 		this.addMouseWheelListener(this);
 		this.addComponentListener(this);
+		
+		Application.image = new Image(500, 500);
+		
+		/*
+		// Temporary repainter
+		(new Thread()
+		{
+			double lastTick = System.currentTimeMillis();
+			
+			@Override
+			public void run()
+			{
+				while(true)
+				{
+					if(System.currentTimeMillis() > lastTick + 40d)
+					{
+						lastTick = System.currentTimeMillis();
+						
+						Application.update();
+						
+						repaint();
+					}
+				}
+		    }
+		}).start();
+		*/
+	}
+	
+	@Override
+	public void paint(Graphics graphics)
+	{
+		Graphics2D painter = (Graphics2D) graphics;
+		
+		Application.paint(painter);
 	}
 
 	@Override
-	public void mouseMoved(MouseEvent event) {}
+	public void mouseMoved(MouseEvent event)
+	{
+		mouseX = event.getX();
+		mouseY = event.getY();
+	}
 
 	@Override
-	public void mouseDragged(MouseEvent event) {}
+	public void mouseDragged(MouseEvent event)
+	{
+		mouseMoved(event);
+	}
 
 	@Override
 	public void keyTyped(KeyEvent event) {}
 
 	@Override
-	public void keyReleased(KeyEvent event) {}
+	public void keyReleased(KeyEvent event)
+	{
+		switch(event.getKeyCode())
+		{
+			case KeyEvent.VK_UP:
+				upPress = false;
+				break;
+			case KeyEvent.VK_DOWN:
+				downPress = false;
+				break;
+			case KeyEvent.VK_LEFT:
+				leftPress = false;
+				break;
+			case KeyEvent.VK_RIGHT:
+				rightPress = false;
+				break;
+			case KeyEvent.VK_SHIFT:
+				shiftPress = false;
+				break;
+		}
+	}
 
 	@Override
-	public void keyPressed(KeyEvent event) {}
+	public void keyPressed(KeyEvent event)
+	{
+		switch(event.getKeyCode())
+		{
+			case KeyEvent.VK_UP:
+				upPress = true;
+				break;
+			case KeyEvent.VK_DOWN:
+				downPress = true;
+				break;
+			case KeyEvent.VK_LEFT:
+				leftPress = true;
+				break;
+			case KeyEvent.VK_RIGHT:
+				rightPress = true;
+				break;
+			case KeyEvent.VK_SHIFT:
+				shiftPress = true;
+				break;
+		}
+	}
 
 	@Override
-	public void mouseReleased(MouseEvent event) {}
+	public void mousePressed(MouseEvent event)
+	{
+		switch(event.getButton())
+		{
+			case MouseEvent.BUTTON1:
+				leftDown = true;
+				break;
+			case MouseEvent.BUTTON2:
+				middleDown = true;
+				break;
+			case MouseEvent.BUTTON3:
+				rightDown = true;
+				break;
+		}
+	}
 
 	@Override
-	public void mousePressed(MouseEvent event) {}
+	public void mouseReleased(MouseEvent event)
+	{
+		switch(event.getButton())
+		{
+			case MouseEvent.BUTTON1:
+				leftDown = false;
+				break;
+			case MouseEvent.BUTTON2:
+				middleDown = false;
+				break;
+			case MouseEvent.BUTTON3:
+				rightDown = false;
+				break;
+		}
+	}
 
 	@Override
 	public void mouseExited(MouseEvent event) {}
@@ -78,7 +205,10 @@ public class MainPanel extends JPanel implements MouseMotionListener, KeyListene
 	public void mouseClicked(MouseEvent event) {}
 
 	@Override
-	public void mouseWheelMoved(MouseWheelEvent event) {}
+	public void mouseWheelMoved(MouseWheelEvent event)
+	{
+		scrollDistance += event.getWheelRotation();
+	}
 
 	@Override
 	public void componentShown(ComponentEvent event) {}
