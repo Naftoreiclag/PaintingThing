@@ -23,6 +23,9 @@ public class Application
 	public static int mpx = 0;
 	public static int mpy = 0;
 	
+	public static int mpxPrev = 0;
+	public static int mpyPrev = 0;
+	
 	public static Stroke stroke = null;
 	
 	public static boolean stroking;
@@ -60,22 +63,37 @@ public class Application
 			}
 			else
 			{
-				Vector2d motion = new Vector2d(mpx - gX, mpy - gY);
-				
-				double magnitude = motion.magnitude();
-				
-				totalDistance += magnitude;
-				
-				motion.divideLocal(magnitude);
-				
-				while(totalDistance > brush.maxInterval())
+				if(mpx != mpxPrev || mpy != mpyPrev)
 				{
-					gX += motion.a * brush.maxInterval();
-					gY += motion.b * brush.maxInterval();
+					Vector2d motion = new Vector2d(mpx - mpxPrev, mpy - mpyPrev);
 					
-					apply(gX, gY);
+					double magnitude = motion.magnitude();
 					
-					totalDistance -= brush.maxInterval();
+					totalDistance += magnitude;
+					
+					motion.divideLocal(magnitude);
+					
+					boolean sync = false;
+					if(totalDistance > brush.maxInterval())
+					{
+						sync = true;
+					}
+					
+					while(totalDistance > brush.maxInterval())
+					{
+						gX += motion.a * brush.maxInterval();
+						gY += motion.b * brush.maxInterval();
+						
+						apply(gX, gY);
+						
+						totalDistance -= brush.maxInterval();
+					}
+					
+					if(sync)
+					{
+						gX = mpx;
+						gY = mpy;
+					}
 				}
 			}
 		}
@@ -92,29 +110,9 @@ public class Application
 			
 			MainPanel.rightDown = false;
 		}
-
-		/*
-		if(MainPanel.leftDown)
-		{
-			if(stroke == null)
-			{
-				stroke = new Stroke(mpx, mpy);
-			}
-			stroke.addMovement(mpx, mpy);
-		}
 		
-		if(stroke != null && !MainPanel.leftDown)
-		{
-			stroke.normalize();
-			
-			stroke = null;
-		}
-		*/
-	}
-	
-	private static double mouseDist()
-	{
-		return Math.sqrt(Math.pow(velX, 2) + Math.pow(velY, 2));
+		mpxPrev = mpx;
+		mpyPrev = mpy;
 	}
 	
 	private static void apply(int x, int y)
