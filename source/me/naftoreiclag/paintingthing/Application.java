@@ -14,103 +14,74 @@ public class Application
 	
 	public static Brush brush = new SquareSprayBrush();
 	
-	public static int pmx = 0;
-	public static int pmy = 0;
+	public static int mousePixelX = 0;
+	public static int mousePixelY = 0;
 	
 	public static int mpxPrev = 0;
 	public static int mpyPrev = 0;
 	
 	public static boolean stroking;
 	
-	public static void updateMp()
+	public static int lastPointX;
+	public static int lastPointY;
+	
+	public static double acccumulatedMouseDistance = 0;
+	
+	public static void updateMousePixelLocaiton()
 	{
-		pmx = MainPanel.mouseX;
-		pmy = MainPanel.mouseY;
+		mousePixelX = MainPanel.mouseX;
+		mousePixelY = MainPanel.mouseY;
 	}
-	
-	public static int gX;
-	public static int gY;
-	
-	public static double totalDistance = 0;
-	
-	public static double distance(int x1, int y1, int x2, int y2)
-	{
-		return Math.sqrt(Math.pow(x1 - x2, 2) + Math.pow(y1 - y2, 2));
-	}
-	
+
 	public static void update()
 	{
-		updateMp();
+		updateMousePixelLocaiton();
 
 		if(MainPanel.leftDown)
 		{
 			if(stroking == false)
 			{
-				gX = pmx;
-				gY = pmy;
+				lastPointX = mousePixelX;
+				lastPointY = mousePixelY;
 				
-				totalDistance = 0;
+				acccumulatedMouseDistance = 0;
 				
 				stroking = true;
 			}
 			else
 			{
-				if(pmx != mpxPrev || pmy != mpyPrev)
+				if(mousePixelX != mpxPrev || mousePixelY != mpyPrev)
 				{
-					Vector2d motion = new Vector2d(pmx - mpxPrev, pmy - mpyPrev);
+					Vector2d motion = new Vector2d(mousePixelX - mpxPrev, mousePixelY - mpyPrev);
 					
 					double magnitude = motion.magnitude();
 					
 					motion.divideLocal(magnitude);
 					
-					if(totalDistance + magnitude >= brush.maxInterval())
+					if(acccumulatedMouseDistance + magnitude >= brush.maxInterval())
 					{
 						int reps = (int) magnitude;
 						
 						Vector2d pos = new Vector2d(mpxPrev, mpyPrev);
 						for(int i = 0; i < reps; ++ i)
 						{
-							totalDistance += 1;
+							acccumulatedMouseDistance += 1;
 							
 							pos.addLocal(motion);
 							
-							if(totalDistance >= brush.maxInterval())
+							if(acccumulatedMouseDistance >= brush.maxInterval())
 							{
-								gX = (int) pos.a;
-								gY = (int) pos.b;
-								apply(gX, gY);
-								totalDistance -= brush.maxInterval();
+								lastPointX = (int) pos.a;
+								lastPointY = (int) pos.b;
+								apply(lastPointX, lastPointY);
+								acccumulatedMouseDistance -= brush.maxInterval();
 							}
 						}
 					}
 					else
 					{
-						totalDistance += magnitude;
+						acccumulatedMouseDistance += magnitude;
 					}
-					
-					/*
-					totalDistance += magnitude;
-					
-					motion.divideLocal(magnitude);
-					
-					if(totalDistance > brush.maxInterval())
-					{
-						Vector2d direction = new Vector2d(pmx - gX, pmy - gY);
-						
-						direction.normalizeLocal();
-						
-						while(totalDistance > brush.maxInterval())
-						{
-							gX += direction.a * brush.maxInterval();
-							gY += direction.b * brush.maxInterval();
-							
-							apply(gX, gY);
-							
-							totalDistance -= brush.maxInterval();
-						}
-						
-						
-					}*/
 				}
 			}
 		}
@@ -128,8 +99,8 @@ public class Application
 			MainPanel.rightDown = false;
 		}
 		
-		mpxPrev = pmx;
-		mpyPrev = pmy;
+		mpxPrev = mousePixelX;
+		mpyPrev = mousePixelY;
 	}
 	
 	private static void apply(int x, int y)
