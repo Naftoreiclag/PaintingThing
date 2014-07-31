@@ -1,5 +1,8 @@
 package me.naftoreiclag.paintingthing.brushes;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import me.naftoreiclag.paintingthing.Changes;
 import me.naftoreiclag.paintingthing.View;
 
