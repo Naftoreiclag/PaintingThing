@@ -16,14 +16,6 @@ public class View
 	
 	public byte get(int x, int y)
 	{
-		int x2 = lx + x;
-		int y2 = lx + y;
-		
-		if(x2 < 0 || x2 >= image.width || y2 < 0 || y >= image.height)
-		{
-			return 0;
-		}
-		
-		return image.colorData[x2][y2];
+		return image.colorData[lx + x][ly + y];
 	}
 }

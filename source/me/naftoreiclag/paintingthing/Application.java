@@ -6,13 +6,17 @@ import java.awt.Graphics2D;
 import me.naftoreiclag.paintingthing.brushes.Brush;
 import me.naftoreiclag.paintingthing.brushes.SquareBrush;
 import me.naftoreiclag.paintingthing.brushes.SquareSprayBrush;
+import me.naftoreiclag.paintingthing.brushes.NoiseRemovalBrush;
 import me.naftoreiclag.paintingthing.util.Vector2d;
 
 public class Application
 {
 	public static Image image;
 	
-	public static Brush brush = new SquareSprayBrush();
+	public static Brush sprayBrush = new SquareSprayBrush();
+	public static Brush strangeBrush = new NoiseRemovalBrush();
+	
+	public static Brush brush = sprayBrush;
 	
 	public static int mousePixelX = 0;
 	public static int mousePixelY = 0;
@@ -36,6 +40,15 @@ public class Application
 	public static void update()
 	{
 		updateMousePixelLocaiton();
+		
+		if(MainPanel.shiftPress)
+		{
+			brush = sprayBrush;
+		}
+		else
+		{
+			brush = strangeBrush;
+		}
 
 		if(MainPanel.leftDown)
 		{

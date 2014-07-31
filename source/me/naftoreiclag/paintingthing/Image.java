@@ -25,7 +25,7 @@ public class Image
 		{
 			for(int y = 0; y < height; ++ y)
 			{
-				colorData[x][y] = 0;
+				colorData[x][y] = 3;
 			}
 		}
 		
@@ -77,6 +77,16 @@ public class Image
 		
 		colorData[x][y] = color;
 		displayImage.setRGB(x, y, palette.get(color));
+	}
+	
+	public byte getColor(int x, int y)
+	{
+		if(x < 0 || x >= width || y < 0 || y >= height)
+		{
+			return 0;
+		}
+		
+		return colorData[x][y];
 	}
 	
 	public void updateDisplayImage()
