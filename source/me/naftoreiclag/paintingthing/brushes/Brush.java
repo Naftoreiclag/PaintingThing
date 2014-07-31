@@ -11,5 +11,5 @@ public abstract class Brush
 	public abstract double maxInterval();
 	
 	// The smallest interval between applications
-	//public double minInterval() { return 0; };
+	public double minInterval() { return 0; };
 }

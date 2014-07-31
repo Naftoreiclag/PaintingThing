@@ -133,6 +133,11 @@ public class Vector2d
 		return ((this.a - other.a) * (this.a - other.a)) + ((this.b - other.b) * (this.b - other.b));
 	}
 	
+	public double magnitude()
+	{
+		return Math.sqrt(this.magnitudeSquared());
+	}
+	
 	public double magnitudeSquared()
 	{
 		return (this.a * this.a) + (this.b * this.b);
