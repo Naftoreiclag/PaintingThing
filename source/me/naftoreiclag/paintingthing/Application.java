@@ -1,5 +1,6 @@
 package me.naftoreiclag.paintingthing;
 
+import java.awt.Color;
 import java.awt.Graphics2D;
 
 import me.naftoreiclag.paintingthing.brushes.Brush;
@@ -17,23 +18,22 @@ public class Application
 	
 	public static int velX = 0;
 	public static int velY = 0;
-
-	public static int mouseX = 0;
-	public static int mouseY = 0;
 	
-	public static Stroke stroke;
+	public static int mpx = 0;
+	public static int mpy = 0;
+	
+	public static Stroke stroke = null;
+	
+	public static void updateMp()
+	{
+		mpx = MainPanel.mouseX;
+		mpy = MainPanel.mouseY;
+	}
 	
 	public static void update()
 	{
-		mouseX = MainPanel.mouseX;
-		mouseY = MainPanel.mouseY;
+		updateMp();
 		
-		/*
-		velX = MainPanel.mouseX - prevMouseX;
-		velY = MainPanel.mouseY - prevMouseY;
-		
-		*/
-
 		if(MainPanel.rightDown)
 		{
 			image.clear();
@@ -43,50 +43,19 @@ public class Application
 		
 		if(MainPanel.leftDown)
 		{
-			Vector2d stroke = new Vector2d(mouseX - prevMouseX, mouseY - prevMouseY);
-			
-			double mag = Math.sqrt(stroke.magnitudeSquared());
-			
-			stroke.divideLocal(mag);
-			
-			int interval = (int) brush.maxInterval();
-			
-			int reps = (int) (mag / interval);
-			
-			for(int i = 0; i < reps; ++ i)
+			if(stroke == null)
 			{
-				Vector2d pos = stroke.multiply(i * interval);
-				
-				apply((int) (prevMouseX + pos.a), (int) (prevMouseY + pos.b));
+				stroke = new Stroke(mpx, mpy);
 			}
-			
-			/*
-			apply(0, 0);
-			double mouseDist = mouseDist();
-			if(mouseDist > brush.maxInterval())
-			{
-				Vector2d direction = new Vector2d(-velX, -velY);
-				direction.normalizeLocal();
-				direction.multiplyLocal(brush.maxInterval());
-				
-				int times = (int) (mouseDist / brush.maxInterval());
-				
-				double currX = 0;
-				double currY = 0;
-				
-				for(int i = 0; i <= times; ++ i)
-				{
-					currX += direction.a;
-					currY += direction.b;
-					
-					apply((int) currX, (int) currY);
-				}
-			}
-			*/
+			stroke.addMovement(mpx, mpy);
 		}
 		
-		prevMouseX = mouseX;
-		prevMouseY = mouseY;
+		if(stroke != null && !MainPanel.leftDown)
+		{
+			stroke.normalize();
+			
+			stroke = null;
+		}
 	}
 	
 	private static double mouseDist()
@@ -104,6 +73,22 @@ public class Application
 	public static void paint(Graphics2D painter)
 	{
 		image.paint(painter);
+		
+		painter.setColor(Color.LIGHT_GRAY);
+		
+		if(stroke != null)
+		{
+			int x = stroke.x;
+			int y = stroke.y;
+			for(Vector2d move : stroke.movements)
+			{
+				
+				painter.drawLine(x, y, (int) (x + move.a), (int) (y + move.b));
+				
+				x += move.a;
+				y += move.b;
+			}
+		}
 	}
 
 }
