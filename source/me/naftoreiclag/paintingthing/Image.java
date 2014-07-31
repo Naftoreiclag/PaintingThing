@@ -7,13 +7,13 @@ import java.util.Map;
 
 public class Image
 {
-	private int width;
-	private int height;
+	public final int width;
+	public final int height;
 	
-	private byte[][] colorData;
+	protected byte[][] colorData;
 	private Map<Byte, Integer> palette;
 	
-	public BufferedImage displayImage;
+	private BufferedImage displayImage;
 	
 	public Image(int width, int height)
 	{
@@ -92,12 +92,19 @@ public class Image
 	
 	public void paint(Graphics2D painter)
 	{
+		painter.drawImage(displayImage, 0, 0, null);
+	}
+
+	public void clear()
+	{
 		for(int x = 0; x < width; ++ x)
 		{
 			for(int y = 0; y < height; ++ y)
 			{
-				painter.drawImage(displayImage, 0, 0, null);
+				colorData[x][y] = 0;
 			}
 		}
+		
+		updateDisplayImage();
 	}
 }

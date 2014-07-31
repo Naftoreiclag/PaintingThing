@@ -66,7 +66,6 @@ public class MainPanel extends JPanel implements MouseMotionListener, KeyListene
 		
 		Application.image = new Image(500, 500);
 		
-		/*
 		// Temporary repainter
 		(new Thread()
 		{
@@ -88,7 +87,6 @@ public class MainPanel extends JPanel implements MouseMotionListener, KeyListene
 				}
 		    }
 		}).start();
-		*/
 	}
 	
 	@Override
