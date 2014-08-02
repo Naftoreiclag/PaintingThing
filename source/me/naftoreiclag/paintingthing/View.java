@@ -16,6 +16,6 @@ public class View
 	
 	public byte get(int x, int y)
 	{
-		return image.colorData[lx + x][ly + y];
+		return image.getColor(lx + x, ly + y);
 	}
 }

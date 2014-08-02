@@ -16,7 +16,7 @@ public class SquareBrush extends Brush
 		{
 			for(int y = -rad; y <= rad; ++ y)
 			{
-				changes.add(x, y, (byte) 5);
+				changes.addPixel(x, y, (byte) 5);
 			}
 		}
 	}

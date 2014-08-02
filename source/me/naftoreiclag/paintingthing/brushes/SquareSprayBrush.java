@@ -19,7 +19,7 @@ public class SquareSprayBrush extends Brush
 			{
 				if(r.nextFloat() > 0.9f)
 				{
-					changes.add(x, y, (byte) 5);
+					changes.addPixel(x, y, (byte) 5);
 				}
 			}
 		}

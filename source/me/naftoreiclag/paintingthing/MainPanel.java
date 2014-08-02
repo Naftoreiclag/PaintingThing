@@ -89,6 +89,16 @@ public class MainPanel extends JPanel implements MouseMotionListener, KeyListene
 		}).start();
 	}
 	
+	public static boolean mouseBetween(int x1, int y1, int x2, int y2)
+	{
+		return mouseX > x1 && mouseX < x2 && mouseY > y1 && mouseY < y2;
+	}
+	
+	public static boolean mouseWithin(int x, int y, int w, int h)
+	{
+		return mouseX > x && mouseX < (x + w) && mouseY > y && mouseY < (y + h);
+	}
+	
 	@Override
 	public void paint(Graphics graphics)
 	{

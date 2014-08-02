@@ -34,7 +34,7 @@ public class NoiseRemovalBrush extends Brush
 					}
 				}
 				
-				changes.add(x, y, getMostCommonColor(colors));
+				changes.addPixel(x, y, getMostCommonColor(colors));
 			}
 		}
 	}

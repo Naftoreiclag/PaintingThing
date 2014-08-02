@@ -2,21 +2,22 @@ package me.naftoreiclag.paintingthing;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.geom.AffineTransform;
 
-import me.naftoreiclag.paintingthing.brushes.Brush;
-import me.naftoreiclag.paintingthing.brushes.SquareBrush;
-import me.naftoreiclag.paintingthing.brushes.SquareSprayBrush;
-import me.naftoreiclag.paintingthing.brushes.NoiseRemovalBrush;
+import me.naftoreiclag.paintingthing.brushes.*;
 import me.naftoreiclag.paintingthing.util.Vector2d;
 
 public class Application
 {
 	public static Image image;
 	
-	public static Brush sprayBrush = new SquareSprayBrush();
-	public static Brush strangeBrush = new NoiseRemovalBrush();
+	public static Brush brush1 = new SquareSprayBrush();
+	public static Brush brush2 = new CircleBrush();
 	
-	public static Brush brush = sprayBrush;
+	public static Brush brush = brush1;
+	
+	public static int mousexPrev = 0;
+	public static int mouseyPrev = 0;
 	
 	public static int mousePixelX = 0;
 	public static int mousePixelY = 0;
@@ -29,26 +30,43 @@ public class Application
 	public static int lastPointX;
 	public static int lastPointY;
 	
+	public static double zoom = 1.0d;
+	
+	public static int camX = 0;
+	public static int camY = 0;
+	
+	public static int toolDrawerExtension;
+	
 	public static double acccumulatedMouseDistance = 0;
+	
+	//public static int viewCenterX;
+	//public static int viewCenterY;
+	
+	public static int toolScroll = 0;
+	
+	public static int hotbarSelection = 0;
+	public static int hotbarSize = 10;
+	
+	public static boolean hoveringOverDrawerHandle = false;
 	
 	public static void updateMousePixelLocaiton()
 	{
-		mousePixelX = MainPanel.mouseX;
-		mousePixelY = MainPanel.mouseY;
+		mousePixelX = (int) ((double) camX + ((MainPanel.mouseX - (MainPanel.width / 2)) / zoom));
+		mousePixelY = (int) ((double) camY + ((MainPanel.mouseY - (MainPanel.height / 2)) / zoom));
 	}
 
 	public static void update()
 	{
+		// Scrolling
+		handleScrollChange();
+		
+		if(MainPanel.middleDown)
+		{
+			camX += (mousexPrev - MainPanel.mouseX) / zoom;
+			camY += (mouseyPrev - MainPanel.mouseY) / zoom;
+		}
 		updateMousePixelLocaiton();
 		
-		if(MainPanel.shiftPress)
-		{
-			brush = sprayBrush;
-		}
-		else
-		{
-			brush = strangeBrush;
-		}
 
 		if(MainPanel.leftDown)
 		{
@@ -56,6 +74,7 @@ public class Application
 			{
 				lastPointX = mousePixelX;
 				lastPointY = mousePixelY;
+				apply(lastPointX, lastPointY);
 				
 				acccumulatedMouseDistance = 0;
 				
@@ -114,6 +133,28 @@ public class Application
 		
 		mpxPrev = mousePixelX;
 		mpyPrev = mousePixelY;
+		
+		mousexPrev = MainPanel.mouseX;
+		mouseyPrev = MainPanel.mouseY;
+	}
+
+	private static void handleScrollChange()
+	{
+		if(MainPanel.mouseWithin(0, 0, 100, MainPanel.height))
+		{
+			toolScroll += MainPanel.scrollDistance;
+		}
+		else
+		{
+			zoom += -(MainPanel.scrollDistance / 20d);
+			
+			if(zoom < 0.1d)
+			{
+				zoom = 0.1d;
+			}
+		}
+		
+		MainPanel.scrollDistance = 0;
 	}
 	
 	private static void apply(int x, int y)
@@ -123,11 +164,54 @@ public class Application
 		changes.apply(image, x, y);
 	}
 
-	public static void paint(Graphics2D painter)
+	private static Graphics2D painter;
+	public static void paint(Graphics2D g2)
 	{
+		painter = g2;
+		
+		painter.setColor(UI.normalColor);
+		painter.fillRect(0, 0, MainPanel.width, MainPanel.height);
+		
+		paintProject();
+
+		painter.setColor(UI.lightColor);
+		painter.fillRect(0, 0, 100, MainPanel.height);
+		painter.setColor(UI.darkColor);
+		painter.drawRect(0, 0, 100, MainPanel.height);
+		
+		/*
+		painter.setColor(UI.lighterColor);
+		painter.fillRect(0, 0, toolDrawerExtension, MainPanel.height);
+		
+		painter.translate(toolDrawerExtension, 0);
+		
+		painter.setColor(UI.lightColor);
+		painter.fillRect(0, 0, 20, MainPanel.height);
+		painter.setColor(UI.darkColor);
+		painter.drawRect(0, 0, 20, MainPanel.height);
+
+		painter.translate(0, MainPanel.height / 2);
+		painter.setColor(UI.darkColor);
+		painter.fillRect(8, -18, 4, 10);
+		painter.fillRect(8, -5, 4, 10);
+		painter.fillRect(8, 8, 4, 10);
+		painter.translate(0, MainPanel.height / -2);
+		
+		painter.translate(-toolDrawerExtension, 0);
+		*/
+	}
+	
+	public static void paintProject()
+	{
+		AffineTransform at = painter.getTransform();
+		
+		painter.translate(MainPanel.width / 2, MainPanel.height / 2);
+		painter.translate(-camX * zoom, -camY * zoom);
+		painter.scale(zoom, zoom);
+		
 		image.paint(painter);
 		
-		painter.setColor(Color.LIGHT_GRAY);
+		painter.setTransform(at);
 	}
 
 }
