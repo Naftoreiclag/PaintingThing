@@ -174,6 +174,13 @@ public class Application
 		
 		paintProject();
 		
+		paintHotbar();
+
+		paintToolbar();
+	}
+
+	private static void paintHotbar()
+	{
 		AffineTransform at = painter.getTransform();
 		painter.translate(((MainPanel.width - hotbarSize * 50) / 2), MainPanel.height - 60);
 		for(int i = 0; i < hotbarSize; ++ i)
@@ -202,22 +209,26 @@ public class Application
 				painter.translate(0, 10);
 			}
 		}
-		
 		painter.setTransform(at);
-		
+	}
 
+	private static void paintToolbar()
+	{
 		painter.setColor(UI.lightColor);
 		painter.fillRect(0, 0, 70, MainPanel.height);
 		painter.setColor(UI.darkColor);
 		painter.drawRect(0, 0, 70, MainPanel.height);
 		
+		paintToolbarScrollbar();
+	}
 
+	private static void paintToolbarScrollbar()
+	{
 		painter.setPaint(UI.gradient3);
 		painter.fillRect(70, 0, 20, MainPanel.height);
 		painter.setColor(UI.darkerColor);
 		painter.drawRect(70, 0, 20, MainPanel.height);
 		
-
 		painter.setPaint(UI.gradient2);
 		painter.translate(70, 0);
 		painter.fillRect(0, 0, 20, 20);
@@ -228,30 +239,9 @@ public class Application
 		painter.setColor(UI.darkerColor);
 		painter.drawRect(70, 0, 20, 20);
 		painter.drawRect(70, MainPanel.height - 20, 20, 20);
-		
-		/*
-		painter.setColor(UI.lighterColor);
-		painter.fillRect(0, 0, toolDrawerExtension, MainPanel.height);
-		
-		painter.translate(toolDrawerExtension, 0);
-		
-		painter.setColor(UI.lightColor);
-		painter.fillRect(0, 0, 20, MainPanel.height);
-		painter.setColor(UI.darkColor);
-		painter.drawRect(0, 0, 20, MainPanel.height);
-
-		painter.translate(0, MainPanel.height / 2);
-		painter.setColor(UI.darkColor);
-		painter.fillRect(8, -18, 4, 10);
-		painter.fillRect(8, -5, 4, 10);
-		painter.fillRect(8, 8, 4, 10);
-		painter.translate(0, MainPanel.height / -2);
-		
-		painter.translate(-toolDrawerExtension, 0);
-		*/
 	}
 	
-	public static void paintProject()
+	private static void paintProject()
 	{
 		AffineTransform at = painter.getTransform();
 		
