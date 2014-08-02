@@ -140,7 +140,7 @@ public class Application
 
 	private static void handleScrollChange()
 	{
-		if(MainPanel.mouseWithin(0, 0, 100, MainPanel.height))
+		if(MainPanel.mouseWithin(0, 0, 80, MainPanel.height))
 		{
 			toolScroll += MainPanel.scrollDistance;
 		}
@@ -173,11 +173,61 @@ public class Application
 		painter.fillRect(0, 0, MainPanel.width, MainPanel.height);
 		
 		paintProject();
+		
+		AffineTransform at = painter.getTransform();
+		painter.translate(((MainPanel.width - hotbarSize * 50) / 2), MainPanel.height - 60);
+		for(int i = 0; i < hotbarSize; ++ i)
+		{
+			if(hotbarSelection == i)
+			{
+				painter.translate(0, -10);
+			}
+			
+			if(i % 2 == 0)
+			{
+				painter.setPaint(UI.gradient4);
+			}
+			else
+			{
+				painter.setPaint(UI.gradient5);
+			}
+			painter.fillRect(0, 0, 50, 50);
+			painter.setPaint(null);
+			painter.setColor(UI.darkerColor);
+			painter.drawRect(0, 0, 50, 50);
+			painter.translate(50, 0);
+			
+			if(hotbarSelection == i)
+			{
+				painter.translate(0, 10);
+			}
+		}
+		
+		painter.setTransform(at);
+		
 
 		painter.setColor(UI.lightColor);
-		painter.fillRect(0, 0, 100, MainPanel.height);
+		painter.fillRect(0, 0, 70, MainPanel.height);
 		painter.setColor(UI.darkColor);
-		painter.drawRect(0, 0, 100, MainPanel.height);
+		painter.drawRect(0, 0, 70, MainPanel.height);
+		
+
+		painter.setPaint(UI.gradient3);
+		painter.fillRect(70, 0, 20, MainPanel.height);
+		painter.setColor(UI.darkerColor);
+		painter.drawRect(70, 0, 20, MainPanel.height);
+		
+
+		painter.setPaint(UI.gradient2);
+		painter.translate(70, 0);
+		painter.fillRect(0, 0, 20, 20);
+		painter.translate(0, MainPanel.height - 20);
+		painter.fillRect(0, 0, 20, 20);
+		painter.translate(-70, -(MainPanel.height - 20));
+		painter.setPaint(null);
+		painter.setColor(UI.darkerColor);
+		painter.drawRect(70, 0, 20, 20);
+		painter.drawRect(70, MainPanel.height - 20, 20, 20);
 		
 		/*
 		painter.setColor(UI.lighterColor);
